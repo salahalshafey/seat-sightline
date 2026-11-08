@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Seat Sightline · See the view from your seat before you book</title>
-  <meta name="description" content="Pick a seat and fly into a live 3D view from it, with viewing-angle insights. Works for cinemas, theatres and stadiums from one JSON venue file.">
+  <meta name="description" content="Pick a seat and fly into a live 3D view from it, with viewing-angle insights. Works for cinemas, theatres, stadiums and microbuses from one JSON venue file.">
   <meta name="theme-color" content="#0f0d0c">
   <meta property="og:title" content="Seat Sightline">
-  <meta property="og:description" content="See the view from your seat before you book: cinema, theatre or stadium.">
+  <meta property="og:description" content="See the view from your seat before you book: cinema, theatre, stadium or microbus.">
   <meta property="og:type" content="website">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23181513'/%3E%3Crect x='6' y='7' width='20' height='4' rx='1' fill='%23f0b44c'/%3E%3Cg fill='%237a2229'%3E%3Crect x='6' y='16' width='5' height='4' rx='1'/%3E%3Crect x='13.5' y='16' width='5' height='4' rx='1'/%3E%3Crect x='21' y='16' width='5' height='4' rx='1'/%3E%3Crect x='6' y='22' width='5' height='4' rx='1'/%3E%3Crect x='21' y='22' width='5' height='4' rx='1'/%3E%3C/g%3E%3Crect x='13.5' y='22' width='5' height='4' rx='1' fill='%23f0b44c'/%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +29,7 @@
       <button role="tab" data-v="cinema" aria-selected="true">Cinema</button>
       <button role="tab" data-v="theatre" aria-selected="false">Theatre</button>
       <button role="tab" data-v="stadium" aria-selected="false">Stadium</button>
+      <button role="tab" data-v="microbus" aria-selected="false">Microbus</button>
     </nav>
   </header>
 
@@ -81,7 +82,7 @@
 
       <details class="panel data">
         <summary>Venue data</summary>
-        <p>Every venue on this page is just this JSON. Change rows, rake, screen size or prices and press Apply. <code>focus.type</code> can be <code>screen</code>, <code>stage</code> or <code>pitch</code>; sections use a <code>straight</code> or <code>arc</code> layout.</p>
+        <p>Every venue on this page is just this JSON. Change rows, rake, screen size or prices and press Apply. <code>focus.type</code> can be <code>screen</code>, <code>stage</code>, <code>pitch</code> or <code>road</code> (a vehicle); sections use a <code>straight</code> or <code>arc</code> layout, and vehicle rows can be spelled out with a <code>pattern</code> such as <code>"D_SS"</code>.</p>
         <textarea id="json" spellcheck="false" aria-label="Venue JSON"></textarea>
         <div class="row"><button class="primary" id="applyJson" type="button">Apply changes</button><button class="ghost" id="resetJson" type="button">Reset to preset</button><span class="err" id="jsonErr"></span></div>
       </details>

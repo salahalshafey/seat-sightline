@@ -1,5 +1,5 @@
 // Viewing-angle maths and the plain-language verdicts shown on the seat card.
-import { R2D, clamp, eyeOf, headOf } from './venue.js';
+import { R2D, clamp, eyeOf, headOf, backBox } from './venue.js';
 
 let seats = [], focus = null;
 /** Call whenever a venue is (re)loaded. */
@@ -52,6 +52,25 @@ export function assess(s) {
     if (m.tilt > 8) warns.push(`Looking up at the stage ${Math.round(m.tilt)}°`);
     meter = { label: 'Distance to the action', v: m.dist, min: 0, max: 35, band: [6, 16], bandLbl: '6–16 m best', unit: ' m' };
     stats = [['Distance to stage', m.dist.toFixed(1), 'm'], ['Stage in view', Math.round(m.span), '°'], ['Sightline angle', fmtSigned(m.tilt), '°'], ['Off-centre', Math.round(m.off), '°']];
+  } else if (t === 'road') {
+    const pct = Math.round(roadClear(s, m.e) * 100), leg = legroom(s);
+    const hasWindow = s.edge && !s.driver;
+    if (s.driver) { verdict = 'Driver’s seat'; why = 'Not for sale. This preview shows the road the way the driver sees it.'; }
+    else if (pct >= 70) { verdict = 'Front-row panorama'; why = 'The whole road ahead is in view through the windscreen. The best seat if you get car-sick, and you get to chat with the driver.'; }
+    else if (pct >= 30) { verdict = 'Road view between the seats'; why = `About ${pct}% of the windscreen shows past the seats and heads in front. Seeing the road ahead helps against car sickness.`; }
+    else if (hasWindow) { verdict = 'Side-window seat'; why = 'The seats in front hide most of the road ahead, but you have a window of your own to look out of and lean on.'; }
+    else { verdict = 'Boxed in'; why = 'Headrests and heads in front hide the road, and there is no window beside you. Fine for a nap, hard if you get car-sick.'; }
+    if (s.kind === 'folding') warns.push('Folding seat: you get up whenever someone behind gets on or off');
+    if (focus.rearAxle !== null && !s.driver) {
+      if (s.z > focus.rearAxle + 0.5) warns.push('Behind the rear axle: the bounciest row');
+      else if (Math.abs(s.z - focus.rearAxle) <= 0.5) warns.push('Over the rear axle: you feel the bumps more');
+    }
+    if (leg !== null && leg < 0.25) warns.push(`Tight legroom, ${Math.round(leg * 100)} cm`);
+    if (focus.door && s.edge && s.x > 0 && s.z > focus.door[0] - 0.3 && s.z < focus.door[1] + 0.3) warns.push({ ok: true, text: 'Next to the sliding door: first off' });
+    if (!warns.some(w => typeof w === 'string') && !s.driver) warns.push({ ok: true, text: 'Smooth ride between the axles' });
+    meter = { label: 'Road ahead you can see', v: pct, min: 0, max: 100, band: [60, 100], bandLbl: '60%+ eases car sickness', unit: '%' };
+    stats = [['Road view', pct, '%'], ['Windscreen width', Math.round(m.span), '°'],
+      leg === null ? ['Legroom', 'open', 'aisle ahead'] : ['Legroom', Math.round(leg * 100), 'cm'], ['Seat', s.driver ? 'Driver' : s.spot, '']];
   } else {
     const down = -m.tilt;
     if (down >= 17) { verdict = 'Tactical overview'; why = 'You see shapes, runs and space open up, close to the main TV camera angle.'; }
@@ -66,6 +85,40 @@ export function assess(s) {
   if (m.blocked) warns.push('A head in front may cover the lower edge');
   if (!warns.length) warns.push({ ok: true, text: 'Clear sightline' });
   return { m, verdict, why, meter, stats, warns };
+}
+/** Share of the windscreen (sampled on a 9 × 4 grid) not hidden by a seat back, headrest or head in front. */
+function roadClear(s, e) {
+  const W = focus.windscreen, ahead = seats.filter(o => o !== s && o.z < s.z - 0.2);
+  let free = 0;
+  for (let i = 0; i < 9; i++) for (let j = 0; j < 4; j++) {
+    const px = W.x0 + (i + 0.5) / 9 * (W.x1 - W.x0), py = W.y0 + (j + 0.5) / 4 * (W.y1 - W.y0);
+    if (!rayBlocked(e, px - e.x, py - e.y, W.z - e.z, ahead)) free++;
+  }
+  return free / 36;
+}
+function rayBlocked(e, dx, dy, dz, ahead) {
+  const dd = dx * dx + dy * dy + dz * dz;
+  for (const o of ahead) {
+    const b = backBox(o), t = (b.z - e.z) / dz;
+    if (t > 0 && t < 1) {
+      const X = Math.abs(e.x + dx * t - o.x), Y = e.y + dy * t - o.y;
+      if (X < b.w / 2 && Y > b.y0 && Y < b.y1) return true;
+      if (X < b.hw / 2 && Y >= b.y1 && Y < b.hy1) return true;
+    }
+    if (o.taken) {
+      const h = headOf(o), hx = h.x - e.x, hy = h.y - e.y, hz = h.z - e.z, k = (hx * dx + hy * dy + hz * dz) / dd;
+      if (k > 0 && k < 1 && Math.hypot(hx - dx * k, hy - dy * k, hz - dz * k) < 0.12) return true;
+    }
+  }
+  return false;
+}
+/** Knee room to the seat back (or dashboard) in front, in metres. null = the aisle is in front of you. */
+function legroom(s) {
+  const ahead = seats.filter(o => o.z < s.z - 0.2);
+  if (!ahead.length) return (s.z - 0.27) - focus.dash;            // front row: knees to the dashboard
+  const rowZ = Math.max(...ahead.map(o => o.z));                    // only the row directly in front counts
+  const o = ahead.find(o => Math.abs(o.z - rowZ) < 0.1 && Math.abs(o.x - s.x) <= s.sw * 0.7);
+  return o ? (s.z - 0.27) - (o.z + 0.29) : null;
 }
 function fmtSigned(v) { const r = Math.round(v); return r > 0 ? `+${r}` : `${r}`; }
 

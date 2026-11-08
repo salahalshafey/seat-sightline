@@ -1,0 +1,50 @@
+{
+  "name": "Coastal Line · Microbus 14",
+  "subtitle": "Marsa Matrouh → Alexandria · Sun 15 Nov · 07:30",
+  "currency": "EGP",
+  "focus": {
+    "type": "road",
+    "width": 1.72,
+    "height": 1.85,
+    "windscreenBottom": 1.12,
+    "windscreenTop": 1.72,
+    "rearAxle": 3.45,
+    "doorFrom": 1.4,
+    "doorTo": 2.5
+  },
+  "sections": [
+    {
+      "name": "Front",
+      "price": 220,
+      "layout": "straight",
+      "rows": 1,
+      "firstDist": 0.95,
+      "rowDepth": 0.9,
+      "startY": 0.2,
+      "pattern": "D_SS",
+      "seatWidth": 0.48,
+      "aisleWidth": 0.14
+    },
+    {
+      "name": "Middle",
+      "price": 200,
+      "layout": "straight",
+      "rows": 3,
+      "firstDist": 1.95,
+      "rowDepth": 0.84,
+      "pattern": ["SS_F", "SS_S", "SS_S"],
+      "seatWidth": 0.46,
+      "aisleWidth": 0.3
+    },
+    {
+      "name": "Back row",
+      "price": 180,
+      "layout": "straight",
+      "rows": 1,
+      "firstDist": 4.5,
+      "rowDepth": 0.84,
+      "pattern": "SSSS",
+      "seatWidth": 0.42
+    }
+  ]
+}

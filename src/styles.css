@@ -112,6 +112,13 @@ button:focus-visible,svg:focus-visible,textarea:focus-visible,summary:focus-visi
 #map .focus-txt{fill:var(--accent-ink);font-family:var(--font-display);font-weight:800;letter-spacing:.1em}
 #map .pitch{fill:#1d3a26}
 #map .pitch-line{fill:none;stroke:rgba(255,255,255,.45);stroke-width:1px;vector-effect:non-scaling-stroke}
+#map .van{fill:var(--panel-2);stroke:var(--seat-free-line);stroke-width:1.5px;vector-effect:non-scaling-stroke}
+#map .van-dash{fill:#2a2522}
+#map .van-tyre{fill:#0a0908}
+#map .van-wheel{fill:none;stroke:var(--muted);stroke-width:2px;vector-effect:non-scaling-stroke}
+#map .van-door{stroke:var(--accent);stroke-width:3px;vector-effect:non-scaling-stroke}
+#map .s.d{fill:#2e2a27;stroke:var(--muted);stroke-dasharray:3 2}
+#map .s.f:not(.c){stroke-dasharray:3 2}
 #map .sight{stroke:var(--accent);stroke-width:1.5px;stroke-dasharray:4 4;vector-effect:non-scaling-stroke;fill:none}
 #map .vring{fill:none;stroke:var(--accent);stroke-width:2px;vector-effect:non-scaling-stroke}
 .hoverline{margin:8px 2px 0;font-size:13px;color:var(--muted);min-height:1.5em;font-variant-numeric:tabular-nums}

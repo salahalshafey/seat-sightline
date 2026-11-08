@@ -2,7 +2,7 @@
 
 **See the view from your seat before you book.** Pick a seat on the map and the camera flies into a live 3D view from that exact spot. Every seat also gets a plain verdict, like *Reference sweet spot*, backed by numbers: distance, viewing angle, head tilt and how far off-centre you sit.
 
-One engine works for any venue. Each cinema, theatre or stadium is a single JSON file.
+One engine works for any venue. Each cinema, theatre, stadium or microbus is a single JSON file.
 
 **[Live demo →](https://salahalshafey.github.io/seat-sightline/)**
 
@@ -16,7 +16,8 @@ One engine works for any venue. Each cinema, theatre or stadium is a single JSON
 
 - **First-person 3D preview** from any seat, including taken ones. Drag to look around, and use *Overview* to see the whole hall.
 - **Real sightlines:** other people sit in the taken seats, so you can see whether the head in front blocks your view. The card also warns you about it.
-- **Seat verdicts based on the numbers.** Cinemas use the 30–40° screen viewing angle that cinema guidelines recommend (SMPTE, THX). Theatres use distance to the stage. Stadiums use how steeply you look down onto the pitch.
+- **Seat verdicts based on the numbers.** Cinemas use the 30–40° screen viewing angle that cinema guidelines recommend (SMPTE, THX). Theatres use distance to the stage. Stadiums use how steeply you look down onto the pitch. Microbuses use how much of the road ahead you can see past the headrests and heads in front (seeing the road helps against car sickness), plus legroom, the rear axle and the sliding door.
+- **Vehicles from the inside:** the microbus has a driver at the wheel with two passenger seats beside them, a folding seat by the sliding door, curtains, roof AC ducts, and the coastal road moving past the windows.
 - **Booking flow:** add or remove seats and see a running total. The demo stops before payment.
 - **Data-driven venues:** edit the JSON in the *Venue data* panel and the map and 3D scene rebuild at once.
 - **Works on phones and desktop:** zoom buttons and mouse-wheel zoom, drag to pan the map, and keyboard navigation (arrow keys plus Enter).
@@ -61,10 +62,11 @@ Copy one of the files in [`venues/`](venues) and change it. Everything is in met
 
 | Field | Meaning |
 |---|---|
-| `focus.type` | `screen`, `stage` or `pitch` |
+| `focus.type` | `screen`, `stage`, `pitch` or `road` (the inside of a vehicle) |
 | `focus` (screen) | `width`, `height`, `bottom` (height of the screen's lower edge) |
 | `focus` (stage) | `width`, `depth`, `height` (stage deck height) |
 | `focus` (pitch) | `length`, `width` |
+| `focus` (road) | `width` and `height` of the cabin inside, `windscreenBottom`, `windscreenTop`, and optional `rearAxle`, `doorFrom`, `doorTo` (z positions, measured back from the windscreen) |
 | `indoor` | `false` draws an open-air ground and sky instead of walls |
 | `layout` | `straight` rows, or `arc` rows curved around a centre point |
 | `arcCenter` | z position of the arc's centre (for example `-12` puts it behind the stage) |
@@ -72,6 +74,8 @@ Copy one of the files in [`venues/`](venues) and change it. Everything is in met
 | `rows`, `firstDist`, `rowDepth` | number of rows, distance of the first row from the focus, and depth of each row |
 | `rise`, `startY` | how much each row steps up (the rake), and the floor height of the first row |
 | `seats` | seats per row: one number for every row, or a list with one number per row |
+| `pattern` | instead of `seats`: each row spelled left to right, for example `"D_SS"`. `S` seat, `F` folding seat, `D` driver (never for sale), `_` gap. One string for every row, or a list with one per row |
+| `aisleWidth` | width of each `_` gap in a `pattern` (defaults to `seatWidth`) |
 | `aisle` | number of seats from each end before an aisle gap. `0` means no aisle |
 | `seatWidth` | seat pitch along the row |
 | `rowPrefix` | optional row names such as `BA1`, `BA2`. Without it, rows are lettered A, B, C… |
@@ -114,7 +118,8 @@ seat-sightline/
 ├── venues/             one JSON file per venue
 │   ├── cinema.json
 │   ├── theatre.json
-│   └── stadium.json
+│   ├── stadium.json
+│   └── microbus.json
 └── docs/               README screenshots
 ```
 
