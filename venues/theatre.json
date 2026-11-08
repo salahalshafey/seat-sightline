@@ -1,0 +1,43 @@
+{
+  "name": "Al-Bahr Theatre",
+  "subtitle": "Evening performance · Sat 14 Nov · 20:00",
+  "currency": "EGP",
+  "indoor": true,
+  "focus": {
+    "type": "stage",
+    "width": 14,
+    "depth": 9,
+    "height": 1.1
+  },
+  "sections": [
+    {
+      "name": "Stalls",
+      "price": 350,
+      "layout": "arc",
+      "arcCenter": -12,
+      "rows": 10,
+      "firstDist": 4,
+      "rowDepth": 0.95,
+      "rise": 0.16,
+      "startY": 0,
+      "seats": [14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      "aisle": 4,
+      "seatWidth": 0.55
+    },
+    {
+      "name": "Balcony",
+      "price": 220,
+      "layout": "arc",
+      "arcCenter": -12,
+      "rows": 6,
+      "firstDist": 16.5,
+      "rowDepth": 0.9,
+      "rise": 0.45,
+      "startY": 5,
+      "seats": 30,
+      "aisle": 0,
+      "seatWidth": 0.55,
+      "rowPrefix": "BA"
+    }
+  ]
+}

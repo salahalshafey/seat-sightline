@@ -1,0 +1,55 @@
+{
+  "name": "Coastline Stadium",
+  "subtitle": "Matrouh Mariners vs Delta United · Fri 20 Nov · 19:00",
+  "currency": "EGP",
+  "indoor": false,
+  "focus": {
+    "type": "pitch",
+    "length": 105,
+    "width": 68
+  },
+  "sections": [
+    {
+      "name": "Main Stand",
+      "price": 300,
+      "layout": "arc",
+      "angle": 0,
+      "rows": 12,
+      "firstDist": 38,
+      "rowDepth": 0.85,
+      "rise": 0.62,
+      "startY": 2,
+      "seats": 64,
+      "seatWidth": 0.6,
+      "rowPrefix": "M"
+    },
+    {
+      "name": "Corner",
+      "price": 200,
+      "layout": "arc",
+      "angle": 42,
+      "rows": 12,
+      "firstDist": 57,
+      "rowDepth": 0.85,
+      "rise": 0.62,
+      "startY": 2,
+      "seats": 36,
+      "seatWidth": 0.6,
+      "rowPrefix": "C"
+    },
+    {
+      "name": "North End",
+      "price": 150,
+      "layout": "arc",
+      "angle": 90,
+      "rows": 12,
+      "firstDist": 60,
+      "rowDepth": 0.85,
+      "rise": 0.62,
+      "startY": 2,
+      "seats": 56,
+      "seatWidth": 0.6,
+      "rowPrefix": "N"
+    }
+  ]
+}

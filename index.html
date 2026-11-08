@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Seat Sightline · See the view from your seat before you book</title>
+  <meta name="description" content="Pick a seat and fly into a live 3D view from it, with viewing-angle insights. Works for cinemas, theatres and stadiums from one JSON venue file.">
+  <meta name="theme-color" content="#0f0d0c">
+  <meta property="og:title" content="Seat Sightline">
+  <meta property="og:description" content="See the view from your seat before you book: cinema, theatre or stadium.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23181513'/%3E%3Crect x='6' y='7' width='20' height='4' rx='1' fill='%23f0b44c'/%3E%3Cg fill='%237a2229'%3E%3Crect x='6' y='16' width='5' height='4' rx='1'/%3E%3Crect x='13.5' y='16' width='5' height='4' rx='1'/%3E%3Crect x='21' y='16' width='5' height='4' rx='1'/%3E%3Crect x='6' y='22' width='5' height='4' rx='1'/%3E%3Crect x='21' y='22' width='5' height='4' rx='1'/%3E%3C/g%3E%3Crect x='13.5' y='22' width='5' height='4' rx='1' fill='%23f0b44c'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="src/styles.css">
+  <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">Seat <b>Sightline</b></span>
+      <span class="event"><strong id="vname"></strong> · <span id="vsub"></span></span>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Venue">
+      <button role="tab" data-v="cinema" aria-selected="true">Cinema</button>
+      <button role="tab" data-v="theatre" aria-selected="false">Theatre</button>
+      <button role="tab" data-v="stadium" aria-selected="false">Stadium</button>
+    </nav>
+  </header>
+
+  <main class="app">
+    <section class="viewer" aria-label="View from the seat">
+      <div class="stage3d" id="stage3d">
+        <div class="ov tl" id="ovSeat">Loading the venue…</div>
+        <div class="ov tr"><button id="btnOverview" type="button">Overview</button><button id="btnReset" type="button">Reset look</button></div>
+        <div class="ov bl">Drag to look around</div>
+        <div class="ov msg" id="glmsg" hidden>The 3D view needs WebGL, which this browser has turned off. The seat map and the numbers below still work.</div>
+      </div>
+    </section>
+
+    <section class="card" id="card" aria-live="polite">
+      <div class="card-head">
+        <div><p class="eyebrow" id="cSection"></p><h2 id="cSeat"></h2></div>
+        <span class="price" id="cPrice"></span>
+      </div>
+      <h3 class="verdict" id="cVerdict"></h3>
+      <p class="why" id="cWhy"></p>
+      <div class="meter">
+        <span class="meter-label" id="mLabel"></span>
+        <div class="meter-track"><div class="band" id="mBand"></div><div class="pin" id="mPin"></div></div>
+        <div class="meter-scale"><span id="mMin"></span><span id="mBandLbl"></span><span id="mMax"></span></div>
+      </div>
+      <dl class="stats" id="cStats"></dl>
+      <ul class="warns" id="cWarn"></ul>
+      <button class="primary" id="cAdd" type="button"></button>
+    </section>
+
+    <div class="mapcol">
+      <section class="panel" aria-label="Seat map">
+        <div class="maphead">
+          <h2>Choose a seat</h2>
+          <div class="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">−</button><button id="zfit" type="button">Fit</button></div>
+        </div>
+        <div class="mapwrap"><svg id="map" tabindex="0" role="application" aria-label="Seat map. Use arrow keys to move between seats and Enter to add a seat." preserveAspectRatio="xMidYMid meet"></svg></div>
+        <p class="hoverline" id="hoverLine">Tap any seat, even a taken one, to see its view.</p>
+        <ul class="legend">
+          <li><i class="lf"></i>Available</li><li><i class="lt"></i>Taken</li><li><i class="lc"></i>In your booking</li><li><i class="lv"></i>Viewing now</li>
+        </ul>
+      </section>
+
+      <section class="panel cart" aria-label="Your booking">
+        <div class="cart-row"><h2>Your booking</h2><span class="total" id="total"></span></div>
+        <div class="chips" id="chips"></div>
+        <button class="primary" id="proceed" type="button">Continue to payment</button>
+        <p class="status" id="status" hidden></p>
+      </section>
+
+      <details class="panel data">
+        <summary>Venue data</summary>
+        <p>Every venue on this page is just this JSON. Change rows, rake, screen size or prices and press Apply. <code>focus.type</code> can be <code>screen</code>, <code>stage</code> or <code>pitch</code>; sections use a <code>straight</code> or <code>arc</code> layout.</p>
+        <textarea id="json" spellcheck="false" aria-label="Venue JSON"></textarea>
+        <div class="row"><button class="primary" id="applyJson" type="button">Apply changes</button><button class="ghost" id="resetJson" type="button">Reset to preset</button><span class="err" id="jsonErr"></span></div>
+      </details>
+    </div>
+  </main>
+</div>
+<noscript><p style="padding:16px">Seat Sightline needs JavaScript to draw the seat map and the 3D view.</p></noscript>
+</body>
+</html>
